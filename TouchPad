@@ -1,0 +1,40 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+public class SimpleTouchPad : MonoBehaviour, IPointerDownHandler,IPointerUpHandler {
+	
+	bool touched;
+	int pointerID;
+	bool canFire;
+
+	void Awake(){
+		touched = false;
+	}
+
+	public void OnPointerDown (PointerEventData data){
+		//Set start point
+		if (!touched) {
+			touched = true;
+			pointerID = data.pointerId;
+			canFire = true;
+		}
+	}
+
+
+	public void OnPointerUP (PointerEventData data){
+		//reset everything
+		if (data.pointerId == pointerID) {
+			canFire = false;
+			touched = false;
+		}
+	}
+
+	public bool GetCanFire(){
+		return canFire;
+	}
+
+}
+
