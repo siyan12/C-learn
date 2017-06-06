@@ -1,0 +1,35 @@
+public class SimpleTouchPad : MonoBehaviour, IEndDragHandler, IBeginDragHandler, IDragHandler {
+//	public class SimpleTouchPad : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IDragHandler {
+
+	private Vector2 origin;
+	 Vector2 direction;
+
+	void Awake(){
+		direction=Vector2.zero;
+	}
+
+	public void OnBeginDrag (PointerEventData data){
+//		public void OnPointDown (PointerEventData data){
+		//Set start point
+		origin=data.position;
+	}
+
+	public void OnDrag (PointerEventData data){
+		//Compare the diffrence
+		Vector2 currentPosition=data.position;
+		Vector2 diffrence = currentPosition - origin;
+		direction = diffrence.normalized;
+//		Debug.Log (direction);
+	}
+
+	public void OnEndDrag (PointerEventData data){
+//	public void OnPointUp (PointerEventData data){
+		//reset everything
+		direction=Vector2.zero;
+	}
+
+	public Vector2 GetDirection(){
+		return direction;
+	}
+
+}
