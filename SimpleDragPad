@@ -1,35 +1,54 @@
-public class SimpleTouchPad : MonoBehaviour, IEndDragHandler, IBeginDragHandler, IDragHandler {
-//	public class SimpleTouchPad : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IDragHandler {
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-	private Vector2 origin;
-	 Vector2 direction;
+public class SimpleTouchPad : MonoBehaviour, IEndDragHandler, IBeginDragHandler, IDragHandler {
+	public float smooth;
+
+	Vector2 origin;
+	Vector2 direction;
+	Vector2 smoothDirection;
+	bool touched;
+	int pointerID;
 
 	void Awake(){
 		direction=Vector2.zero;
+		touched = false;
 	}
 
 	public void OnBeginDrag (PointerEventData data){
-//		public void OnPointDown (PointerEventData data){
 		//Set start point
-		origin=data.position;
+		if (!touched) {
+			touched = true;
+			pointerID = data.pointerId;
+			origin = data.position;
+		}
 	}
 
 	public void OnDrag (PointerEventData data){
 		//Compare the diffrence
-		Vector2 currentPosition=data.position;
-		Vector2 diffrence = currentPosition - origin;
-		direction = diffrence.normalized;
+		if (data.pointerId == pointerID) {
+			Vector2 currentPosition = data.position;
+			Vector2 diffrence = currentPosition - origin;
+			direction = diffrence.normalized;
+		}
 //		Debug.Log (direction);
 	}
 
 	public void OnEndDrag (PointerEventData data){
-//	public void OnPointUp (PointerEventData data){
 		//reset everything
-		direction=Vector2.zero;
+		if (data.pointerId == pointerID) {
+			direction = Vector2.zero;
+			touched = false;
+		}
 	}
 
 	public Vector2 GetDirection(){
-		return direction;
+		smoothDirection = Vector2.MoveTowards (smoothDirection,direction,smooth);
+		return smoothDirection;
 	}
 
 }
+
