@@ -1,0 +1,62 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMove : MonoBehaviour {
+	public float tilt;
+	public int pastLenght;
+	public Vector2 positionLimit;
+
+	Vector3 targetPosition;
+	Vector2 targetVector;
+	Vector3 offSet;
+	Vector3[] pastPosition;
+	Vector3 thePastPosition;
+	int i=0;
+
+	void Start(){
+		pastPosition=new Vector3[pastLenght];
+	}
+
+	void Update(){
+		Vector2 mousePosition = Input.mousePosition;
+		targetVector = mousePosition / 50 - new Vector2(6,9);
+		targetPosition = new Vector3 (targetVector.x, 0f, targetVector.y);
+//		Debug.Log (targetPosition);
+	}
+
+	void FixedUpdate(){
+		PastPosition ();
+		offSet = targetPosition - thePastPosition;
+		PlayerRotate ();
+		transform.position = targetPosition;
+		PositionLimit ();
+	}
+
+	void PastPosition(){
+		if (i < pastLenght) {
+			RecordPosition ();
+		} else {
+			i -= pastLenght;
+			RecordPosition ();
+		}
+	}
+
+	void RecordPosition(){
+		thePastPosition = pastPosition [i];
+		pastPosition [i] = transform.position;
+		i++;
+	}
+
+	void PlayerRotate(){
+		transform.rotation = Quaternion.Euler (offSet.z * tilt, 0f, offSet.x * tilt);
+	}
+
+	void PositionLimit(){
+		transform.position = new Vector3 (
+			Mathf.Clamp (transform.position.x,-positionLimit.x, positionLimit.x),
+			transform.position.y,
+			Mathf.Clamp (transform.position.z,-positionLimit.y, positionLimit.y)
+		);
+	}
+}
